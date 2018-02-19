@@ -1,3 +1,3 @@
 # edgeForm
 
-![edge screenshot](https://github.com/adam-p/markdown-here/raw/master/src/common/images/icon48.png "edge screenshot")
+![edge screenshot](https://raw.githubusercontent.com/WoodburyShortridge/edgeForm/master/img/Screen%20Shot%202018-02-19%20at%206.17.58%20PM.png "edge screenshot")
