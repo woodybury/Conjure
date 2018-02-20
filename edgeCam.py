@@ -1,4 +1,4 @@
-# OpenCV program to perform Edge detection in real time
+# OpenCV program to perform Edge detection in real time and translate into transform pixels
 # import libraries of python OpenCV
 # where its functionality resides
 import cv2
