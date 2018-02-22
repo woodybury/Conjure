@@ -11,6 +11,20 @@ import numpy as np
 cap = cv2.VideoCapture(0)
 
 
+# auto canny using median
+def auto_canny(vid, sigma=0.33):
+    # compute the median of the single channel pixel intensities
+    v = np.median(vid)
+
+    # apply automatic Canny edge detection using the computed median
+    lower = int(max(0, (1.0 - sigma) * v))
+    upper = int(min(255, (1.0 + sigma) * v))
+    edged = cv2.Canny(vid, lower, upper)
+
+    # return the edged image
+    return edged
+
+
 # loop runs if capturing has been initialized
 while(1):
 
@@ -31,16 +45,27 @@ while(1):
     # Bitwise-AND mask and original image
     res = cv2.bitwise_and(frame,frame, mask= mask)
 
+    # filters
+    kernel = np.ones((15,15),np.float32)/225
+    filter = cv2.GaussianBlur(frame, (15,15), 0)
+    #filter = cv2.medianBlur(frame,15)
+    #filter = cv2.bilateralFilter(frame,15,75,75)
+    #filter = cv2.filter2D(frame,-1,kernel)
+
+    # no filter
+    #filter = frame
+
     # Display an original image
-    #cv2.imshow('Original',frame)
+    cv2.imshow('Original',filter)
+
 
     # finds edges in the input image image and
     # marks them in the output map edges
-    lgEdges = cv2.Canny(frame,100,200)
+    lgEdges = auto_canny(filter)
 
     # create small image (24x16) and edges
-    smFrame = cv2.resize(frame, (24,16))
-    smEdges = cv2.Canny(smFrame,400,500)
+    smFrame = cv2.resize(filter, (24,16))
+    smEdges = auto_canny(smFrame)
 
     # resize windows
     # large
