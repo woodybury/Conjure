@@ -48,8 +48,8 @@ while(1):
     # filters
     kernel = np.ones((15,15),np.float32)/225
     filter = cv2.GaussianBlur(frame, (15,15), 0)
-    #filter = cv2.medianBlur(frame,15)
-    #filter = cv2.bilateralFilter(frame,15,75,75)
+    #filter = cv2.medianBlur(filter1,15)
+    #filter = cv2.bilateralFilter(filter2,15,75,75)
     #filter = cv2.filter2D(frame,-1,kernel)
 
     # no filter
