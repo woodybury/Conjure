@@ -45,19 +45,8 @@ while(1):
     # Bitwise-AND mask and original image
     res = cv2.bitwise_and(frame,frame, mask= mask)
 
-    # filters
-    kernel = np.ones((15,15),np.float32)/225
+    # filter
     filter = cv2.GaussianBlur(frame, (15,15), 0)
-    #filter = cv2.medianBlur(filter1,15)
-    #filter = cv2.bilateralFilter(filter2,15,75,75)
-    #filter = cv2.filter2D(frame,-1,kernel)
-
-    # no filter
-    #filter = frame
-
-    # Display an original image
-    cv2.imshow('Original',filter)
-
 
     # finds edges in the input image image and
     # marks them in the output map edges
@@ -67,19 +56,25 @@ while(1):
     smFrame = cv2.resize(filter, (24,16), interpolation = cv2.INTER_NEAREST)
     smEdges = auto_canny(smFrame)
 
+    # filter
+    lgFilter = cv2.medianBlur(lgEdges,15)
+    smFilter = cv2.medianBlur(smEdges,15)
+
     # resize windows
     # large
-    cv2.namedWindow('lgEdges',cv2.WINDOW_NORMAL)
-    lgEdges = cv2.resize (lgEdges, (480,320), interpolation = cv2.INTER_NEAREST)
+    lgEdges = cv2.resize (lgEdges, (480,320))
     # small
-    cv2.namedWindow('smEdges',cv2.WINDOW_NORMAL)
     smEdges = cv2.resize (smEdges, (480,320), interpolation = cv2.INTER_NEAREST)
+    # original
+    original = cv2.resize (frame, (480,320))
 
     # Display edges in a frame
     # large
     cv2.imshow('lgEdges', lgEdges)
     # small
     cv2.imshow('smEdges', smEdges)
+    # original
+    cv2.imshow('Original',original)
 
 
     # Wait for Esc key to stop
