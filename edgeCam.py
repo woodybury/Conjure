@@ -64,16 +64,16 @@ while(1):
     lgEdges = auto_canny(filter)
 
     # create small image (24x16) and edges
-    smFrame = cv2.resize(filter, (24,16))
+    smFrame = cv2.resize(filter, (24,16), interpolation = cv2.INTER_NEAREST)
     smEdges = auto_canny(smFrame)
 
     # resize windows
     # large
     cv2.namedWindow('lgEdges',cv2.WINDOW_NORMAL)
-    lgEdges = cv2.resize (lgEdges, (480,320))
+    lgEdges = cv2.resize (lgEdges, (480,320), interpolation = cv2.INTER_NEAREST)
     # small
     cv2.namedWindow('smEdges',cv2.WINDOW_NORMAL)
-    smEdges = cv2.resize (smEdges, (480,320))
+    smEdges = cv2.resize (smEdges, (480,320), interpolation = cv2.INTER_NEAREST)
 
     # Display edges in a frame
     # large
