@@ -1,9 +1,4 @@
-# OpenCV program to perform Edge detection in real time and translate into transform pixels
-# import libraries of python OpenCV
-# where its functionality resides
 import cv2
-
-# np is an alias pointing to numpy library
 import numpy as np
 
 
@@ -57,7 +52,7 @@ while(1):
     smEdges = auto_canny(smFrame)
 
     # filter
-    lgFilter = cv2.medianBlur(lgEdges,15)
+    lgFilter = cv2.medianBlur(lgEdges,1)
     smFilter = cv2.medianBlur(smEdges,15)
 
     # resize windows
