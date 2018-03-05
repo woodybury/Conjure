@@ -1,5 +1,15 @@
 import cv2
 import numpy as np
+from occamy import Socket
+
+socket = Socket("ws://dlevs.me:4000/socket")
+socket.connect()
+
+channel = socket.channel("room:lobby", {})
+channel.on("connect", print ('Im in'))
+channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
+
+channel.join()
 
 cap = cv2.VideoCapture(0)
 
@@ -13,17 +23,15 @@ def colorMask (bgr, thresh, grey):
     mask = cv2.inRange(hsvFrame, minHSV, maxHSV)
     res = cv2.bitwise_and(frame,frame, mask= mask)
 
+    grey_image = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+
     # run a median blur
-    median = cv2.medianBlur(res,15)
+    median = cv2.medianBlur(grey_image,15)
 
     # create small image (24x16) for pixels
-    smFrame = cv2.resize(median, (24,16), interpolation = cv2.INTER_NEAREST)
+    pixels = cv2.resize(median, (24,16), interpolation = cv2.INTER_NEAREST)
 
-    # resize it so we can see
-    pixels = cv2.resize (smFrame, (480,320), interpolation = cv2.INTER_NEAREST)
-
-    # change colors for transform grey
-    pixels[np.where((pixels != [0, 0, 0]).all(axis = 2))] = [grey, grey, grey]
+    pixels[pixels > 0] = grey
 
     return pixels
 
@@ -41,13 +49,27 @@ while(1):
     # color1
     color1 = colorMask(bgr1, 40, 195)
     # color2
-    color2 = colorMask(bgr2, 40, 60)
+    color2 = colorMask(bgr2, 40, 120)
     # total
     total = cv2.add( color1, color2)
 
+    grandTotalRev = np.concatenate((total, total, total), axis=0)
 
-    cv2.imshow ('total', total)
+    grandTotal = np.swapaxes(grandTotalRev, 0, 1 )
+
     cv2.imshow ('original', original)
+    cv2.imshow ('grand total', grandTotal)
+
+    grandTotalFlat = grandTotal.flatten()
+    transform = grandTotalFlat
+
+    count = 0
+    transformSend = ""
+    for ele in transform:
+        transformSend+=(" "+str(ele))
+        count += 1
+
+    channel.push("input",{"body": transformSend})
 
 
     k = cv2.waitKey(5) & 0xFF

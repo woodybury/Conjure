@@ -1,6 +1,15 @@
 import cv2
 import numpy as np
+from occamy import Socket
 
+socket = Socket("ws://dlevs.me:4000/socket")
+socket.connect()
+
+channel = socket.channel("room:lobby", {})
+channel.on("connect", print ('Im in'))
+channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
+
+channel.join()
 
 # capture frames from a camera
 cap = cv2.VideoCapture(0)
@@ -58,8 +67,6 @@ while(1):
     # resize windows
     # large
     lgEdges = cv2.resize (lgEdges, (480,320))
-    # small
-    smEdges = cv2.resize (smEdges, (480,320), interpolation = cv2.INTER_NEAREST)
     # original
     original = cv2.resize (frame, (480,320))
 
@@ -70,6 +77,21 @@ while(1):
     cv2.imshow('smEdges', smEdges)
     # original
     cv2.imshow('Original',original)
+
+    grandTotalRev = np.concatenate((smEdges, smEdges, smEdges), axis=0)
+
+    grandTotal = np.swapaxes(grandTotalRev, 0, 1 )
+
+    grandTotalFlat = grandTotal.flatten()
+    transform = grandTotalFlat
+
+    count = 0
+    transformSend = ""
+    for ele in transform:
+        transformSend+=(" "+str(ele))
+        count += 1
+
+    channel.push("input",{"body": transformSend})
 
 
     # Wait for Esc key to stop
