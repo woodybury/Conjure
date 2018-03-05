@@ -2,14 +2,14 @@ import cv2
 import numpy as np
 from occamy import Socket
 
-socket = Socket("ws://dlevs.me:4000/socket")
-socket.connect()
+# socket = Socket("ws://dlevs.me:4000/socket")
+# socket.connect()
 
-channel = socket.channel("room:lobby", {})
-channel.on("connect", print ('Im in'))
-channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
+# channel = socket.channel("room:lobby", {})
+# channel.on("connect", print ('Im in'))
+# channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
 
-channel.join()
+# channel.join()
 
 # capture frames from a camera
 cap = cv2.VideoCapture(0)
@@ -24,6 +24,9 @@ def auto_canny(vid, sigma=0.33):
     lower = int(max(0, (1.0 - sigma) * v))
     upper = int(min(255, (1.0 + sigma) * v))
     edged = cv2.Canny(vid, lower, upper)
+
+    edged = cv2.dilate(edged, None, iterations=1)
+    edged = cv2.erode(edged, None, iterations=1)
 
     # return the edged image
     return edged
@@ -91,7 +94,7 @@ while(1):
         transformSend+=(" "+str(ele))
         count += 1
 
-    channel.push("input",{"body": transformSend})
+    # channel.push("input",{"body": transformSend})
 
 
     # Wait for Esc key to stop

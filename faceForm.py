@@ -31,14 +31,23 @@ while (1):
 
             landmarks = np.matrix([[p.x, p.y] for p in detected_landmarks])
 
+            posPrev = (0,0)
             for idx,point in enumerate(landmarks):
                 pos=(point[0,0],point[0,1])
 
-                cv2.circle(blank_image,pos,2,color=(255,255,255),thickness=20)
+                cv2.circle(blank_image,pos,2,color=(255,255,255),thickness=30)
 
-        blank_image = cv2.resize(blank_image, (24,16), interpolation = cv2.INTER_NEAREST)
+                lineLength = abs(posPrev[0] - pos[0]) + abs(posPrev[1] - pos[1])
+                if lineLength < 75:
+                    cv2.line(blank_image,posPrev,pos,(255,255,255),30)
 
-        cv2.imshow('Landmark found',blank_image)
+                posPrev = pos
+
+
+        sm_image = cv2.resize(blank_image, (24,16), interpolation = cv2.INTER_NEAREST)
+
+        cv2.imshow('large image',blank_image)
+        cv2.imshow('small image',sm_image)
 
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
