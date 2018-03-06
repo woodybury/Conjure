@@ -31,15 +31,16 @@ while (1):
         faces = faceCascade.detectMultiScale(gray, 1.3, 5)
 
         h, w = image.shape[:2]
-        blank_image = np.zeros((h,w,3), np.uint8)
+        blank_image = np.zeros((h,w,1), np.uint8)
 
+        '''
         for (x, y, w, h) in faces:
-            cv2.rectangle(blank_image, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-            blank_image = blank_image[y:y+h, x:x+w]
-            image = image[y:y+h, x:x+w]
-
-        faces = faceCascade.detectMultiScale(image, 1.3, 5)
+            blank_image = blank_image[y:y+h,x:x+w]
+            gray = gray[y:y+h, x:x+w]
+            
+        '''
+        faces = faceCascade.detectMultiScale(gray, 1.3, 5)
 
         for (x, y, w, h) in faces:
 
@@ -53,18 +54,17 @@ while (1):
             posPrev = (0,0)
             for idx,point in enumerate(landmarks_each):
                 pos=(point[0,0],point[0,1])
-
-                cv2.circle(blank_image,pos,2,color=(255,255,255),thickness=5)
-
+                # cv2.circle(blank_image,pos,2,color=255,thickness=10)
                 lineLength = abs(posPrev[0] - pos[0]) + abs(posPrev[1] - pos[1])
                 if lineLength < 50:
-                    cv2.line(blank_image,posPrev,pos,(255,255,255),20)
+                    cv2.line(blank_image,posPrev,pos,255,15)
 
                 posPrev = pos
 
-        lg_image = cv2.resize(blank_image, (240,160), interpolation = cv2.INTER_NEAREST)
+        blank_image = blank_image[240:480, 360:840]
 
-        sm_image = cv2.resize(blank_image, (24,16), interpolation = cv2.INTER_NEAREST)
+        sm_image = cv2.resize(blank_image, (48,24), interpolation = cv2.INTER_NEAREST)
+        lg_image = cv2.resize(sm_image, (480,240), interpolation = cv2.INTER_NEAREST)
 
         cv2.imshow('large',lg_image)
         cv2.imshow('small',sm_image)
