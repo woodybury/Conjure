@@ -3,7 +3,6 @@ import numpy as np
 from occamy import Socket
 
 # uncomment this below to connect to server room
-'''
 socket = Socket("ws://dlevs.me:4000/socket")
 socket.connect()
 
@@ -12,7 +11,6 @@ channel.on("connect", print ('Im in'))
 channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
 
 channel.join()
-'''
 
 while(1):
     moreGoods = input('Do you want to purchase more of my goods?: ').lower()
@@ -48,9 +46,8 @@ while(1):
         print (transformSend)
 
         # uncomment this to send to server
-        '''
         channel.push("input",{"body": transformSend})
-        '''
+
 
         print ("Well then, you're ready to start. Good luck! You have a long and difficult journey ahead of you.")
 

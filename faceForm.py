@@ -4,7 +4,6 @@ import dlib,time
 from occamy import Socket
 
 # uncomment this below to connect to server room
-'''
 socket = Socket("ws://dlevs.me:4000/socket")
 socket.connect()
 
@@ -13,7 +12,6 @@ channel.on("connect", print ('Im in'))
 channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
 
 channel.join()
-'''
 
 cap= cv2.VideoCapture(0)
 time.sleep(2)
@@ -70,15 +68,15 @@ while (1):
                 # cv2.circle(blank_image,pos,2,color=255,thickness=10)
                 # wish python had a switch
                 if i in range(1,13):
-                    cv2.line(blank_image,posPrev,pos,135,15)
+                    cv2.line(blank_image,posPrev,pos,135,10)
                 if i in range(14,19):
-                    cv2.line(blank_image,posPrev,pos,145,15)
+                    cv2.line(blank_image,posPrev,pos,145,10)
                 if i in range(20,25):
-                    cv2.line(blank_image,posPrev,pos,145,15)
+                    cv2.line(blank_image,posPrev,pos,145,10)
                 if i in range(26,28):
-                    cv2.line(blank_image,posPrev,pos,155,15)
+                    cv2.line(blank_image,posPrev,pos,155,10)
                 if i in range(28,29):
-                    cv2.line(blank_image,posPrev,pos,185,15)
+                    cv2.line(blank_image,posPrev,pos,185,10)
                 posPrev = pos
 
         blank_image = blank_image[240:480, 360:840]
@@ -97,12 +95,10 @@ while (1):
         transformSend+=(" "+str(ele))
 
     # if you want to look at the numbers :)
-    print (transformSend)
+    # print (transformSend)
 
     # uncomment this to send to server
-    '''
     channel.push("input",{"body": transformSend})
-    '''
 
     k = cv2.waitKey(5) & 0xFF
     if k == 27:
