@@ -2,6 +2,12 @@ import cv2
 import numpy as np
 import dlib,time
 from occamy import Socket
+from listening import recognition
+
+def stop():
+    print ('you said stop')
+
+recognition(stop, 'stop')
 
 # uncomment this below to connect to server room
 socket = Socket("ws://dlevs.me:4000/socket")
@@ -17,10 +23,10 @@ cap= cv2.VideoCapture(0)
 time.sleep(2)
 
 # cascade
-faceCascade =  cv2.CascadeClassifier('xml/haarcascade_frontalface_default.xml')
+faceCascade =  cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 
 # landmark predictor
-predictor =  dlib.shape_predictor('xml/shape_predictor_68_face_landmarks.dat')
+predictor =  dlib.shape_predictor('data/shape_predictor_68_face_landmarks.dat')
 
 # pick apart the face
 jaw = list(range(0, 17))

@@ -38,12 +38,14 @@ while(1):
         img = img.flatten()
 
         # stringify for server
+        count = 0
         transformSend = ""
         for ele in img:
+            count += 1
             transformSend+=(" "+str(ele))
 
         # if you want to look at the numbers :)
-        print (transformSend)
+        print (count)
 
         # uncomment this to send to server
         channel.push("input",{"body": transformSend})

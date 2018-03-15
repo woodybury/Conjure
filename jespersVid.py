@@ -42,10 +42,14 @@ while(1):
                 # flatten array
                 img = img.flatten()
 
+                # set the frame rate
+                cv2.waitKey(100)
+
                 # stringify for server
                 transformSend = ""
-                for ele in img:
-                    transformSend+=(" "+str(ele))
+                for i,ele in enumerate(img):
+                    if i % 3 == 0:
+                        transformSend+=(" "+str(ele))
 
                 # if you want to look at the numbers :)
                 print (transformSend)
