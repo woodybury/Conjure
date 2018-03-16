@@ -92,15 +92,15 @@ def faceform():
             # lg_image = cv2.resize(sm_image, (480,240), interpolation = cv2.INTER_NEAREST)
             # cv2.imshow('large',lg_image)
 
-        # flatten array
-        sm_image = sm_image.flatten()
-
-        # stringify for server
-        transformSend = ""
-        for ele in sm_image:
-            transformSend+=(" "+str(ele))
-
         if not ispaused:
+            # flatten array
+            sm_image = sm_image.flatten()
+
+            # stringify for server
+            transformSend = ""
+            for ele in sm_image:
+                transformSend+=(" "+str(ele))
+
             # if you want to look at the numbers :)
             print (transformSend)
             # uncomment this to send to server
@@ -113,31 +113,32 @@ def faceform():
     cap.release()
     cv2.destroyAllWindows()
 
-def pause():
+def stop():
     global ispaused
     ispaused = True
     print ('stop')
+    t1 = Thread(target = voicecontrol)
+    t1.start()
 
 def start():
     global ispaused
     ispaused = False
-    print ('stop')
+    print ('start')
+    t1 = Thread(target = voicecontrol)
+    t1.start()
 
-def voicecontrolstop ():
-    recognition(pause, 'stop')
-def voicecontrolstart ():
-    recognition(start, 'start')
+def voicecontrol ():
+    if not ispaused:
+        recognition(stop, 'stop', False)
+    else:
+        recognition(start, 'start', False)
 
 if __name__ == "__main__":
 
     #connect()
 
-    t1 = Thread(target = voicecontrolstop)
-    t2 = Thread(target = voicecontrolstart)
-    t3 = Thread(target = faceform)
-
+    t1 = Thread(target = voicecontrol)
     t1.start()
     time.sleep(2)
+    t2 = Thread(target = faceform)
     t2.start()
-    time.sleep(2)
-    t3.start()

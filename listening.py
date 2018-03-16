@@ -3,7 +3,9 @@ from pocketsphinx import pocketsphinx
 from sphinxbase.sphinxbase import *
 import pyaudio
 
-def recognition(keyphrase_function, key_phrase):
+
+# added 'loop' as arg this is true or false
+def recognition(keyphrase_function, key_phrase, loop):
 
     modeldir = "data/files/sphinx/models"
 
@@ -41,4 +43,7 @@ def recognition(keyphrase_function, key_phrase):
             keyphrase_function()
             # Stop and reinitialize the decoder
             decoder.end_utt()
-            decoder.start_utt()
+            if loop:
+                decoder.start_utt()
+            else:
+                break
