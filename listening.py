@@ -41,9 +41,10 @@ def recognition(keyphrase_function, key_phrase, loop):
         # If the hypothesis is not none, the key phrase was recognized
         if decoder.hyp() is not None:
             keyphrase_function()
-            # Stop and reinitialize the decoder
             decoder.end_utt()
             if loop:
+                # Stop and reinitialize the decoder if loop is on
                 decoder.start_utt()
             else:
+                # else end
                 break
