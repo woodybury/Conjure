@@ -46,5 +46,5 @@ def recognition(keyphrase_function, key_phrase, loop):
                 # Stop and reinitialize the decoder if loop is on
                 decoder.start_utt()
             else:
-                # else end
-                break
+                # else end and send true
+                return True

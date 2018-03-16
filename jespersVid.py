@@ -1,23 +1,32 @@
 import cv2
 import numpy as np
 from occamy import Socket
+from listening import recognition
 
-# uncomment this below to connect to server room
-socket = Socket("ws://dlevs.me:4000/socket")
-socket.connect()
+def connect():
+    socket = Socket("ws://dlevs.me:4000/socket")
+    socket.connect()
 
-channel = socket.channel("room:lobby", {})
-channel.on("connect", print ('Im in'))
-channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
+    channel = socket.channel("room:lobby", {})
+    channel.on("connect", print ('Im in'))
+    channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
 
-channel.join()
+    channel.join()
+
+
+# uncomment this to connect to server
+# connect()
+
+def heardfunction():
+    print ('you said no')
 
 while(1):
-    moreGoods = input('Do you want to purchase more of my goods?: ').lower()
-    if moreGoods == 'yes':
-        print ("Too bad! You have to say yes for this demo to work :)")
+    print ('Do you want to purchase more of my goods?')
 
-    elif moreGoods == 'no':
+    # recognition takes a function that is called when keyword is head, the keyword, and if it should keep listening for the keyword
+    moreGoods = recognition(heardfunction, 'no', False)
+
+    if moreGoods:
 
         # load image
         cap = cv2.VideoCapture('vid/wagon.avi', 0)
@@ -55,7 +64,7 @@ while(1):
                 print (transformSend)
 
                 # uncomment this to send to server
-                channel.push("input",{"body": transformSend})
+                # channel.push("input",{"body": transformSend})
             else:
                 break
 
@@ -63,6 +72,6 @@ while(1):
         print ("Well then, you're ready to start. Good luck! You have a long and difficult journey ahead of you.")
 
     else:
-        print ("I'll take a yes or a no please")
+        print ("Too bad! You have to say no for this demo to work :)")
 
 cv2.destroyAllWindows()
