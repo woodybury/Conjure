@@ -30,7 +30,7 @@ def recognition(keyphrase_function, key_phrase):
     # Loop forever
     while True:
         # Read 1024 samples from the buffer
-        buf = stream.read(1024)
+        buf = stream.read(1024, exception_on_overflow = False)
         # If data in the buffer, process using the sphinx decoder
         if buf:
             decoder.process_raw(buf, False, False)
