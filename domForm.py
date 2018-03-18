@@ -1,7 +1,7 @@
 import cv2, time
 import numpy as np
 from occamy import Socket
-from threading import Thread
+import threading
 from listening import recognition
 
 socket = Socket("ws://dlevs.me:4000/socket")
@@ -17,10 +17,7 @@ def transform( image ):
     img = cv2.imread(image, 0)
 
     # resize img for transform
-    img = cv2.resize(img, (16,24), interpolation = cv2.INTER_NEAREST)
-
-    # add img together x3 for total transform
-    img = np.concatenate((img, img, img), axis=1)
+    img = cv2.resize(img, (48,24), interpolation = cv2.INTER_NEAREST)
 
     # flatten array
     img = img.flatten()
@@ -57,9 +54,11 @@ def listen(function, keyword):
     recognition(function, keyword, True)
 
 if __name__ == "__main__":
-    t1 = Thread(target = listen(links,'links'))
+    t1 = threading.Thread(target = listen, args=(links,'links'))
+    t2 = threading.Thread(target = listen, args=(headings,'headings'))
+    t3 = threading.Thread(target = listen, args=(images, 'images'))
     t1.start()
-    t2 = Thread(target = listen(headings,'headings'))
+    time.sleep(1)
     t2.start()
-    t3 = Thread(target = listen(images, 'images'))
+    time.sleep(1)
     t3.start()
