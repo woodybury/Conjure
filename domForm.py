@@ -17,7 +17,10 @@ def transform( image ):
     img = cv2.imread(image, 0)
 
     # resize img for transform
-    img = cv2.resize(img, (48,24), interpolation = cv2.INTER_NEAREST)
+    img = cv2.resize(img, (16,24), interpolation = cv2.INTER_NEAREST)
+
+    # add img together x3 for total transform
+    img = np.concatenate((img, img, img), axis=1)
 
     # flatten array
     img = img.flatten()
@@ -25,7 +28,6 @@ def transform( image ):
     # stringify for server
     transformSend = ""
     for ele in img:
-        count += 1
         transformSend+=(" "+str(ele))
 
     # if you want to look at the numbers :)
@@ -34,10 +36,13 @@ def transform( image ):
     # uncomment this to send to server
     channel.push("input",{"body": transformSend})
 
+def everything():
+    print ('links')
+    transform('./img/everything.png')
 
 def links():
     print ('links')
-    transform('./links.jpg')
+    transform('./img/links.png')
 
 def headings():
     print ('headings')
@@ -53,9 +58,12 @@ def listen(function, keyword):
     recognition(function, keyword, True)
 
 if __name__ == "__main__":
+    t0 = threading.Thread(target = listen, args=(everything,'everything'))
     t1 = threading.Thread(target = listen, args=(links,'links'))
     t2 = threading.Thread(target = listen, args=(headings,'headings'))
     t3 = threading.Thread(target = listen, args=(images, 'images'))
+    t0.start()
+    time.sleep(1)
     t1.start()
     time.sleep(1)
     t2.start()
