@@ -3,19 +3,14 @@ import numpy as np
 from occamy import Socket
 from listening import recognition
 
-def connect():
-    socket = Socket("ws://dlevs.me:4000/socket")
-    socket.connect()
+socket = Socket("ws://dlevs.me:4000/socket")
+socket.connect()
 
-    channel = socket.channel("room:lobby", {})
-    channel.on("connect", print ('Im in'))
-    channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
+channel = socket.channel("room:lobby", {})
+channel.on("connect", print ('Im in'))
+channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
 
-    channel.join()
-
-
-# uncomment this to connect to server
-# connect()
+channel.join()
 
 def heardfunction():
     print ('you said no')
@@ -64,7 +59,7 @@ while(1):
                 print (transformSend)
 
                 # uncomment this to send to server
-                # channel.push("input",{"body": transformSend})
+                channel.push("input",{"body": transformSend})
             else:
                 break
 

@@ -9,7 +9,8 @@ from listening import recognition
 # global is paused? not good practice but w/e
 ispaused = False
 
-def connect():
+def faceform():
+
     socket = Socket("ws://dlevs.me:4000/socket")
     socket.connect()
 
@@ -18,8 +19,6 @@ def connect():
     channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
 
     channel.join()
-
-def faceform():
 
     cap= cv2.VideoCapture(0)
     time.sleep(2)
@@ -89,7 +88,7 @@ def faceform():
             blank_image = blank_image[240:480, 360:840]
 
             sm_image = cv2.resize(blank_image, (48,24), interpolation = cv2.INTER_NEAREST)
-            # lg_image = cv2.resize(sm_image, (480,240), interpolation = cv2.INTER_NEAREST)
+            # lg_image = cv2.resize(sm_image, (960,480), interpolation = cv2.INTER_NEAREST)
             # cv2.imshow('large',lg_image)
 
         if not ispaused:
@@ -104,7 +103,7 @@ def faceform():
             # if you want to look at the numbers :)
             print (transformSend)
             # uncomment this to send to server
-            # channel.push("input",{"body": transformSend})
+            channel.push("input",{"body": transformSend})
 
         k = cv2.waitKey(5) & 0xFF
         if k == 27:
@@ -135,7 +134,8 @@ def voicecontrol ():
 
 if __name__ == "__main__":
 
-    #connect()
+    # faceform()
+
 
     t1 = Thread(target = voicecontrol)
     t1.start()
