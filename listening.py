@@ -3,6 +3,15 @@ from pocketsphinx import pocketsphinx
 from sphinxbase.sphinxbase import *
 import pyaudio
 
+# Start a pyaudio instance
+p = pyaudio.PyAudio()
+# Create an input stream with pyaudio - if on raspi use index 1 for google hat mic
+if os.uname()[1] == 'raspberrypi':
+    stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, input_device_index=1, frames_per_buffer=1024)
+else:
+    stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
+# Start the stream
+stream.start_stream()
 
 # added 'loop' as arg this is true or false
 def recognition(keyphrase_function, key_phrase, loop):
@@ -18,13 +27,6 @@ def recognition(keyphrase_function, key_phrase, loop):
     config.set_string('-keyphrase', key_phrase)
     config.set_string('-logfn', 'data/files/sphinx.log')
     config.set_float('-kws_threshold', 1)
-
-    # Start a pyaudio instance
-    p = pyaudio.PyAudio()
-    # Create an input stream with pyaudio
-    stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
-    # Start the stream
-    stream.start_stream()
 
     # Process audio chunk by chunk. On keyword detected perform action and restart search
     decoder = pocketsphinx.Decoder(config)

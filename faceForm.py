@@ -5,21 +5,21 @@ from threading import Thread
 from occamy import Socket
 from listening import recognition
 
+'''
+socket = Socket("ws://dlevs.me:4000/socket")
+socket.connect()
+
+channel = socket.channel("room:lobby", {})
+channel.on("connect", print ('Im in'))
+channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
+
+channel.join()
+'''
 
 # global is paused? not good practice but w/e
 ispaused = False
 
 def faceform():
-
-    socket = Socket("ws://dlevs.me:4000/socket")
-    socket.connect()
-
-    channel = socket.channel("room:lobby", {})
-    channel.on("connect", print ('Im in'))
-    channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
-
-    channel.join()
-
     cap= cv2.VideoCapture(0)
     time.sleep(2)
 
@@ -103,7 +103,7 @@ def faceform():
             # if you want to look at the numbers :)
             print (transformSend)
             # uncomment this to send to server
-            channel.push("input",{"body": transformSend})
+            # channel.push("input",{"body": transformSend})
 
         k = cv2.waitKey(5) & 0xFF
         if k == 27:
@@ -133,9 +133,6 @@ def voicecontrol ():
         recognition(start, 'start', False)
 
 if __name__ == "__main__":
-
-    # faceform()
-
 
     t1 = Thread(target = voicecontrol)
     t1.start()

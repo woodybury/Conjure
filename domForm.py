@@ -4,6 +4,7 @@ from occamy import Socket
 import threading
 from listening import recognition
 
+'''
 socket = Socket("ws://dlevs.me:4000/socket")
 socket.connect()
 
@@ -12,6 +13,7 @@ channel.on("connect", print ('Im in'))
 channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
 
 channel.join()
+'''
 
 def transform( image ):
     img = cv2.imread(image, 0)
@@ -34,10 +36,10 @@ def transform( image ):
     print (transformSend)
 
     # uncomment this to send to server
-    channel.push("input",{"body": transformSend})
+    # channel.push("input",{"body": transformSend})
 
 def everything():
-    print ('links')
+    print ('everything')
     transform('./img/everything.png')
 
 def links():
