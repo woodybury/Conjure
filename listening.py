@@ -5,11 +5,12 @@ import pyaudio
 
 # Start a pyaudio instance
 p = pyaudio.PyAudio()
-# Create an input stream with pyaudio - if on raspi use index 1 for google hat mic
+# Create an input stream with pyaudio - if on raspi use index 1 for google voice hat mic
 if os.uname()[1] == 'raspberrypi':
     stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, input_device_index=1, frames_per_buffer=1024)
 else:
     stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
+    print ('stream started')
 # Start the stream
 stream.start_stream()
 
@@ -42,8 +43,8 @@ def recognition(keyphrase_function, key_phrase, loop):
             break
         # If the hypothesis is not none, the key phrase was recognized
         if decoder.hyp() is not None:
-            keyphrase_function()
             decoder.end_utt()
+            keyphrase_function()
             if loop:
                 # Stop and reinitialize the decoder if loop is on
                 decoder.start_utt()
