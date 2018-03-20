@@ -2,7 +2,7 @@ import cv2, time
 import numpy as np
 from occamy import Socket
 import threading
-from listening import recognition
+import listening
 
 '''
 socket = Socket("ws://dlevs.me:4000/socket")
@@ -57,7 +57,7 @@ def images():
 
 def listen(function, keyword):
     print ('listening for' + keyword)
-    recognition(function, keyword, True)
+    listening.recognition(function, keyword, True)
 
 if __name__ == "__main__":
     t0 = threading.Thread(target = listen, args=(everything,'everything'))
@@ -65,9 +65,9 @@ if __name__ == "__main__":
     t2 = threading.Thread(target = listen, args=(headings,'headings'))
     t3 = threading.Thread(target = listen, args=(images, 'images'))
     t0.start()
-    time.sleep(1)
+    time.sleep(5)
     t1.start()
-    time.sleep(1)
+    time.sleep(5)
     t2.start()
-    time.sleep(1)
+    time.sleep(5)
     t3.start()

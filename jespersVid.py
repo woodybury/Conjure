@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from occamy import Socket
-from listening import recognition
+import listening
 
 '''
 socket = Socket("ws://dlevs.me:4000/socket")
@@ -21,7 +21,7 @@ while(1):
     print ('Do you want to purchase more of my goods?')
 
     # recognition takes a function that is called when keyword is head, the keyword, and if it should keep listening for the keyword
-    moreGoods = recognition(heardfunction, 'no', False)
+    moreGoods = listening.recognition(heardfunction, 'no', False)
 
     if moreGoods:
 

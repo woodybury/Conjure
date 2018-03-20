@@ -3,7 +3,7 @@ import numpy as np
 import dlib,time
 from threading import Thread
 from occamy import Socket
-from listening import recognition
+import listening
 
 '''
 socket = Socket("ws://dlevs.me:4000/socket")
@@ -128,9 +128,9 @@ def start():
 
 def voicecontrol ():
     if not ispaused:
-        recognition(stop, 'stop', False)
+        listening.recognition(stop, 'stop', False)
     else:
-        recognition(start, 'start', False)
+        listening.recognition(start, 'start', False)
 
 if __name__ == "__main__":
 
