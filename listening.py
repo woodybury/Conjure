@@ -8,6 +8,7 @@ p = pyaudio.PyAudio()
 # Create an input stream with pyaudio - if on raspi use index 1 for google voice hat mic
 if os.uname()[1] == 'raspberrypi':
     stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, input_device_index=1, frames_per_buffer=1024)
+    print('stream started on rpi')
 else:
     stream = p.open(format=pyaudio.paInt16, channels=1, rate=16000, input=True, frames_per_buffer=1024)
     print ('stream started')
