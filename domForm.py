@@ -1,19 +1,10 @@
 import cv2, time
 import numpy as np
-from occamy import Socket
 import threading
 import listening
+import connect
 
-'''
-socket = Socket("ws://dlevs.me:4000/socket")
-socket.connect()
-
-channel = socket.channel("room:lobby", {})
-channel.on("connect", print ('Im in'))
-channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
-
-channel.join()
-'''
+channel = connect.join()
 
 def transform( image ):
     img = cv2.imread(image, 0)
@@ -36,7 +27,7 @@ def transform( image ):
     print (transformSend)
 
     # uncomment this to send to server
-    # channel.push("input",{"body": transformSend})
+    channel.push("input",{"body": transformSend})
 
 def everything():
     print ('everything')

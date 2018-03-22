@@ -2,19 +2,10 @@ import cv2
 import numpy as np
 import dlib,time
 from threading import Thread
-from occamy import Socket
 import listening
+import connect
 
-'''
-socket = Socket("ws://dlevs.me:4000/socket")
-socket.connect()
-
-channel = socket.channel("room:lobby", {})
-channel.on("connect", print ('Im in'))
-channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
-
-channel.join()
-'''
+channel = connect.join()
 
 # global is paused? not good practice but w/e
 ispaused = False

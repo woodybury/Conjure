@@ -1,16 +1,8 @@
 import cv2
 import numpy as np
-from occamy import Socket
+import connect
 
-# uncomment this below to connect to server room
-socket = Socket("ws://dlevs.me:4000/socket")
-socket.connect()
-
-channel = socket.channel("room:lobby", {})
-channel.on("connect", print ('Im in'))
-channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
-
-channel.join()
+channel = connect.join()
 
 while(1):
     moreGoods = input('Do you want to purchase more of my goods?: ').lower()
