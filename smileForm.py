@@ -25,14 +25,33 @@ while 1:
                 maxSmile = s[2] * s[3]
                 bigSmile = s
         if bigSmile is None:
-            print ('frown')
+            img = cv2.imread('img/frown.jpg', 0)
         else:
             # cv2.rectangle(roi_img, (bigSmile[0], bigSmile[1]), (bigSmile[0] + bigSmile[2], bigSmile[1] + bigSmile[3]), (0, 255, 0), 1)
             sm_ratio = round(bigSmile[2] / bigSmile[0], 3)
             if sm_ratio>2:
-                print('smile')
+                img = cv2.imread('img/smile.jpg', 0)
             else:
-                print ('neutral')
+                img = cv2.imread('img/neutral.jpg', 0)
+
+        # resize img for transform
+        img = cv2.resize(img, (16,24), interpolation = cv2.INTER_NEAREST)
+
+        # add img together x3 for total transform
+        img = np.concatenate((img, img, img), axis=1)
+
+        # flatten array
+        img = img.flatten()
+        # stringify for server
+        transformSend = ""
+        for ele in img:
+            transformSend+=(" "+str(ele))
+
+        # if you want to look at the numbers :)
+        print (transformSend)
+
+        # uncomment this to send to server
+        # channel.push("input",{"body": transformSend})
 
     k = cv2.waitKey(30) & 0xff
     if k == 27:
