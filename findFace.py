@@ -43,6 +43,7 @@ def lookforfaces():
                 if delta > changethresh:
                     print('good different face')
                     cv2.imwrite('img/face/face'+str(num)+'.jpg',frame)
+        time.sleep(2)
 
     # release capture
     cap.release()
