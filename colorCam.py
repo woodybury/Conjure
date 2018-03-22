@@ -36,43 +36,43 @@ def colorform():
         return pixels
 
     while(1):
+        if not ispaused:
+            # colors we are looking for
+            bgr1 = [58, 66, 23]
+            bgr2 = [96, 37, 27]
 
-        # colors we are looking for
-        bgr1 = [58, 66, 23]
-        bgr2 = [96, 37, 27]
+            _, frame = cap.read()
+            hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-        _, frame = cap.read()
-        hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+            original = cv2.resize (frame, (480,320))
 
-        original = cv2.resize (frame, (480,320))
+            # color1
+            color1 = colorMask(bgr1, 40, 195)
+            # color2
+            color2 = colorMask(bgr2, 40, 120)
+            # total
+            total = cv2.add( color1, color2)
 
-        # color1
-        color1 = colorMask(bgr1, 40, 195)
-        # color2
-        color2 = colorMask(bgr2, 40, 120)
-        # total
-        total = cv2.add( color1, color2)
+            grandTotalRev = np.concatenate((total, total, total), axis=0)
 
-        grandTotalRev = np.concatenate((total, total, total), axis=0)
+            grandTotal = np.swapaxes(grandTotalRev, 0, 1 )
 
-        grandTotal = np.swapaxes(grandTotalRev, 0, 1 )
+            # cv2.imshow ('original', original)
+            # cv2.imshow ('grand total', grandTotal)
 
-        # cv2.imshow ('original', original)
-        # cv2.imshow ('grand total', grandTotal)
+            grandTotalFlat = grandTotal.flatten()
+            transform = grandTotalFlat
 
-        grandTotalFlat = grandTotal.flatten()
-        transform = grandTotalFlat
-
-        transformSend = ""
-        for ele in transform:
-            transformSend+=(" "+str(ele))
-        # print (transformSend)
-        # channel.push("input",{"body": transformSend})
+            transformSend = ""
+            for ele in transform:
+                transformSend+=(" "+str(ele))
+            print (transformSend)
+            # channel.push("input",{"body": transformSend})
 
 
-        k = cv2.waitKey(5) & 0xFF
-        if k == 27:
-            break
+            k = cv2.waitKey(5) & 0xFF
+            if k == 27:
+                break
 
     cv2.destroyAllWindows()
 
