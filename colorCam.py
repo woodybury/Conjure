@@ -1,72 +1,108 @@
 import cv2
 import numpy as np
+from threading import Thread
+import listening
 import connect
 
-channel = connect.join()
+# channel = connect.join()
 
-cap = cv2.VideoCapture(0)
+# global is paused? not good practice but w/e
+ispaused = False
 
-def colorMask (bgr, thresh, grey):
-    # bgr to hsv
-    hsv = cv2.cvtColor( np.uint8([[bgr]] ), cv2.COLOR_BGR2HSV)[0][0]
+def colorform():
 
-    minHSV = np.array([hsv[0] - (thresh / 2), hsv[1] - thresh, hsv[2] - thresh])
-    maxHSV = np.array([hsv[0] + (thresh / 2), hsv[1] + thresh, hsv[2] + thresh])
+    cap = cv2.VideoCapture(0)
 
-    mask = cv2.inRange(hsvFrame, minHSV, maxHSV)
-    res = cv2.bitwise_and(frame,frame, mask= mask)
+    def colorMask (bgr, thresh, grey):
+        # bgr to hsv
+        hsv = cv2.cvtColor( np.uint8([[bgr]] ), cv2.COLOR_BGR2HSV)[0][0]
 
-    grey_image = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
+        minHSV = np.array([hsv[0] - (thresh / 2), hsv[1] - thresh, hsv[2] - thresh])
+        maxHSV = np.array([hsv[0] + (thresh / 2), hsv[1] + thresh, hsv[2] + thresh])
 
-    # run a median blur
-    median = cv2.medianBlur(grey_image,15)
+        mask = cv2.inRange(hsvFrame, minHSV, maxHSV)
+        res = cv2.bitwise_and(frame,frame, mask= mask)
 
-    # create small image (24x16) for pixels
-    pixels = cv2.resize(median, (24,16), interpolation = cv2.INTER_NEAREST)
+        grey_image = cv2.cvtColor(res, cv2.COLOR_BGR2GRAY)
 
-    pixels[pixels > 0] = grey
+        # run a median blur
+        median = cv2.medianBlur(grey_image,15)
 
-    return pixels
+        # create small image (24x16) for pixels
+        pixels = cv2.resize(median, (24,16), interpolation = cv2.INTER_NEAREST)
 
-while(1):
+        pixels[pixels > 0] = grey
 
-    # colors we are looking for
-    bgr1 = [58, 66, 23]
-    bgr2 = [96, 37, 27]
+        return pixels
 
-    _, frame = cap.read()
-    hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
+    while(1):
 
-    original = cv2.resize (frame, (480,320))
+        # colors we are looking for
+        bgr1 = [58, 66, 23]
+        bgr2 = [96, 37, 27]
 
-    # color1
-    color1 = colorMask(bgr1, 40, 195)
-    # color2
-    color2 = colorMask(bgr2, 40, 120)
-    # total
-    total = cv2.add( color1, color2)
+        _, frame = cap.read()
+        hsvFrame = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
-    grandTotalRev = np.concatenate((total, total, total), axis=0)
+        original = cv2.resize (frame, (480,320))
 
-    grandTotal = np.swapaxes(grandTotalRev, 0, 1 )
+        # color1
+        color1 = colorMask(bgr1, 40, 195)
+        # color2
+        color2 = colorMask(bgr2, 40, 120)
+        # total
+        total = cv2.add( color1, color2)
 
-    cv2.imshow ('original', original)
-    cv2.imshow ('grand total', grandTotal)
+        grandTotalRev = np.concatenate((total, total, total), axis=0)
 
-    grandTotalFlat = grandTotal.flatten()
-    transform = grandTotalFlat
+        grandTotal = np.swapaxes(grandTotalRev, 0, 1 )
 
-    count = 0
-    transformSend = ""
-    for ele in transform:
-        transformSend+=(" "+str(ele))
-        count += 1
+        # cv2.imshow ('original', original)
+        # cv2.imshow ('grand total', grandTotal)
 
-    channel.push("input",{"body": transformSend})
+        grandTotalFlat = grandTotal.flatten()
+        transform = grandTotalFlat
+
+        count = 0
+        transformSend = ""
+        for ele in transform:
+            transformSend+=(" "+str(ele))
+            count += 1
+
+        # channel.push("input",{"body": transformSend})
 
 
-    k = cv2.waitKey(5) & 0xFF
-    if k == 27:
-        break
+        k = cv2.waitKey(5) & 0xFF
+        if k == 27:
+            break
 
-cv2.destroyAllWindows()
+    cv2.destroyAllWindows()
+
+
+def stop():
+    global ispaused
+    ispaused = True
+    print ('stop')
+    t1 = Thread(target = voicecontrol)
+    t1.start()
+
+def start():
+    global ispaused
+    ispaused = False
+    print ('start')
+    t1 = Thread(target = voicecontrol)
+    t1.start()
+
+def voicecontrol ():
+    if not ispaused:
+        listening.recognition(stop, 'stop', False)
+    else:
+        listening.recognition(start, 'start', False)
+
+if __name__ == "__main__":
+
+    t1 = Thread(target = voicecontrol)
+    t1.start()
+    time.sleep(2)
+    t2 = Thread(target = colorform)
+    t2.start()
