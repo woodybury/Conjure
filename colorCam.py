@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from threading import Thread
-import listening
+import listening,time
 import connect
 
 # channel = connect.join()
@@ -63,12 +63,10 @@ def colorform():
         grandTotalFlat = grandTotal.flatten()
         transform = grandTotalFlat
 
-        count = 0
         transformSend = ""
         for ele in transform:
             transformSend+=(" "+str(ele))
-            count += 1
-
+        # print (transformSend)
         # channel.push("input",{"body": transformSend})
 
 
