@@ -5,7 +5,7 @@ from threading import Thread
 import listening
 import connect
 
-channel = connect.join()
+# channel = connect.join()
 
 # global is paused? not good practice but w/e
 ispaused = False

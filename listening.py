@@ -23,8 +23,11 @@ def recognition(keyphrase_function, key_phrase, loop):
     # Create a decoder with certain model
     config = pocketsphinx.Decoder.default_config()
     # Use the mobile voice model (en-us-ptm) for performance constrained systems
-    config.set_string('-hmm', os.path.join(modeldir, 'en-us/en-us-ptm'))
-    # config.set_string('-hmm', os.path.join(modeldir, 'en-us/en-us'))
+    if os.uname()[1] == 'raspberrypi':
+        config.set_string('-hmm', os.path.join(modeldir, 'en-us/en-us-ptm'))
+    else:
+        config.set_string('-hmm', os.path.join(modeldir, 'en-us/en-us'))
+
     config.set_string('-dict', os.path.join(modeldir, 'en-us/cmudict-en-us.dict'))
     config.set_string('-keyphrase', key_phrase)
     config.set_string('-logfn', 'data/files/sphinx.log')

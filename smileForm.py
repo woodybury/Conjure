@@ -1,7 +1,10 @@
 import numpy as np
 import cv2
 import time
+import connect
 
+
+channel = connect.join()
 face_classifier = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 smile_classifier = cv2.CascadeClassifier('data/haarcascade_smile.xml')
 
@@ -51,7 +54,7 @@ while 1:
         print (transformSend)
 
         # uncomment this to send to server
-        # channel.push("input",{"body": transformSend})
+        channel.push("input",{"body": transformSend})
 
     k = cv2.waitKey(30) & 0xff
     if k == 27:
