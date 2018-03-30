@@ -45,10 +45,9 @@ def recognize():
         hypernyms = []
         holonyms = []
         meronyms = []
+        entailments = []
 
         sep = '.'
-
-        word = wordnet.synsets(term)[0]
 
         for syn in wordnet.synsets(term):
             name = syn.name().split(sep, 1)[0]
@@ -57,21 +56,25 @@ def recognize():
             for lem in syn.lemmas():
                 lemmas.append(lem.name())
 
-        for hypo in word.hyponyms():
-            name = hypo.name().split(sep, 1)[0]
-            hyponyms.append(name)
+            for hypo in syn.hyponyms():
+                name = hypo.name().split(sep, 1)[0]
+                hyponyms.append(name)
 
-        for hyper in word.hypernyms():
-            name = hyper.name().split(sep, 1)[0]
-            hypernyms.append(name)
+            for hyper in syn.hypernyms():
+                name = hyper.name().split(sep, 1)[0]
+                hypernyms.append(name)
 
-        for holo in word.part_holonyms():
-            name = holo.name().split(sep, 1)[0]
-            holonyms.append(name)
+            for holo in syn.part_holonyms():
+                name = holo.name().split(sep, 1)[0]
+                holonyms.append(name)
 
-        for mero in word.part_meronyms():
-            name = mero.name().split(sep, 1)[0]
-            meronyms.append(name)
+            for mero in syn.part_meronyms():
+                name = mero.name().split(sep, 1)[0]
+                meronyms.append(name)
+
+            for ent in syn.entailments():
+                name = ent.name().split(sep, 1)[0]
+                entailments.append(name)
 
         synset = str(set(synsets))
         print('synsets: ' + synset)
@@ -101,6 +104,11 @@ def recognize():
         meronym = str(set(meronyms))
         print('meronyms: ' + meronym)
         cmd="say " + meronym
+        # os.system(cmd)
+
+        entailment = str(set(entailments))
+        print('entailments: ' + entailment)
+        cmd="say " + entailment
         # os.system(cmd)
 
 
