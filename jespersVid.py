@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 import listening
-import connect
+# import connect
 
 channel = connect.join()
 
@@ -31,10 +31,8 @@ while(1):
                 img = np.concatenate((img, img, img), axis=1)
 
                 # uncomment this to see image
-                '''
+
                 cv2.imshow('image', img)
-                cv2.waitKey()
-                '''
 
                 # flatten array
                 img = img.flatten()
@@ -52,7 +50,7 @@ while(1):
                 print (transformSend)
 
                 # uncomment this to send to server
-                # channel.push("input",{"body": transformSend})
+                channel.push("input",{"body": transformSend})
             else:
                 break
 

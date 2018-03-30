@@ -5,7 +5,7 @@ from threading import Thread
 import listening
 import connect
 
-# channel = connect.join()
+channel = connect.join()
 
 # global is paused? not good practice but w/e
 ispaused = False
@@ -92,9 +92,9 @@ def faceform():
                 transformSend+=(" "+str(ele))
 
             # if you want to look at the numbers :)
-            print (transformSend)
+            # print (transformSend)
             # uncomment this to send to server
-            # channel.push("input",{"body": transformSend})
+            channel.push("input",{"body": transformSend})
 
         k = cv2.waitKey(5) & 0xFF
         if k == 27:

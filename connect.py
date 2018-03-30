@@ -6,7 +6,8 @@ def join():
 
     channel = socket.channel("room:lobby", {})
     channel.on("connect", print ('Im in'))
-    channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
+    #channel.on("touch", print("no("))
+    #channel.on("touch", lambda msg, x: print("> {}".format(msg["body"])))
 
     channel.join()
 

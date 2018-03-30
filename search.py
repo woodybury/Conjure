@@ -34,15 +34,74 @@ def recognize():
 
     if response['text']:
 
-        print ('search term: ' + response['text'])
+        term = response['text'].replace(" ", "_")
+        print ('search term: ' + term)
+        cmd="say " + term
+        # os.system(cmd)
 
-        synonyms = []
+        synsets = []
+        lemmas = []
+        hyponyms = []
+        hypernyms = []
+        holonyms = []
+        meronyms = []
 
-        for syn in wordnet.synsets(response['text']):
-            for l in syn.lemmas():
-                synonyms.append(l.name())
+        sep = '.'
 
-        print('synsets: ' + str(set(synonyms)))
+        word = wordnet.synsets(term)[0]
+
+        for syn in wordnet.synsets(term):
+            name = syn.name().split(sep, 1)[0]
+            synsets.append(name)
+
+            for lem in syn.lemmas():
+                lemmas.append(lem.name())
+
+        for hypo in word.hyponyms():
+            name = hypo.name().split(sep, 1)[0]
+            hyponyms.append(name)
+
+        for hyper in word.hypernyms():
+            name = hyper.name().split(sep, 1)[0]
+            hypernyms.append(name)
+
+        for holo in word.part_holonyms():
+            name = holo.name().split(sep, 1)[0]
+            holonyms.append(name)
+
+        for mero in word.part_meronyms():
+            name = mero.name().split(sep, 1)[0]
+            meronyms.append(name)
+
+        synset = str(set(synsets))
+        print('synsets: ' + synset)
+        cmd="say " + synset
+        # os.system(cmd)
+
+        lemma = str(set(lemmas))
+        print('lemmas: ' + lemma)
+        cmd="say " + lemma
+        # os.system(cmd)
+
+        hyponym = str(set(hyponyms))
+        print('hyponyms: ' + hyponym)
+        cmd="say " + hyponym
+        # os.system(cmd)
+
+        hypernym = str(set(hypernyms))
+        print('hypernyms: ' + hypernym)
+        cmd="say " + hypernym
+        # os.system(cmd)
+
+        holonym = str(set(holonyms))
+        print('holonyms: ' + holonym)
+        cmd="say " + holonym
+        # os.system(cmd)
+
+        meronym = str(set(meronyms))
+        print('meronyms: ' + meronym)
+        cmd="say " + meronym
+        # os.system(cmd)
 
 
 while (1):
