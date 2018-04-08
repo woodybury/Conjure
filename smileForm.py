@@ -43,6 +43,8 @@ while 1:
         # add img together x3 for total transform
         img = np.concatenate((img, img, img), axis=1)
 
+        cv2.imshow('smile', img)
+
         # flatten array
         img = img.flatten()
         # stringify for server
@@ -51,7 +53,7 @@ while 1:
             transformSend+=(" "+str(ele))
 
         # if you want to look at the numbers :)
-        print (transformSend)
+        # print (transformSend)
 
         # uncomment this to send to server
         channel.push("input",{"body": transformSend})
