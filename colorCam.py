@@ -4,7 +4,7 @@ from threading import Thread
 import listening,time
 import connect
 
-# channel = connect.join()
+channel = connect.join()
 
 # global is paused? not good practice but w/e
 ispaused = False
@@ -67,7 +67,7 @@ def colorform():
             for ele in transform:
                 transformSend+=(" "+str(ele))
             print (transformSend)
-            # channel.push("input",{"body": transformSend})
+            channel.push("input",{"body": transformSend})
 
 
             k = cv2.waitKey(5) & 0xFF

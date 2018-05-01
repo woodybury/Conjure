@@ -7,7 +7,7 @@ import connect
 import cv2, time
 import numpy as np
 
-channel = connect.join()
+# channel = connect.join()
 
 searchsound = sa.WaveObject.from_wave_file('sound/search.wav')
 
@@ -20,6 +20,8 @@ else:
 
 def transform( image ):
     img = cv2.imread(image, 0)
+
+    img = (img - 75)
 
     # resize img for transform
     img = cv2.resize(img, (16,24), interpolation = cv2.INTER_NEAREST)
@@ -39,7 +41,7 @@ def transform( image ):
     print (transformSend)
 
     # uncomment this to send to server
-    channel.push("input",{"body": transformSend})
+    # channel.push("input",{"body": transformSend})
 
 
 def website():
@@ -143,43 +145,43 @@ def recognize_search():
         synset = str(set(synsets))
         print('synsets: ' + synset)
         cmd="say " + 'synsets: ' + synset
-        # os.system(cmd)
+        os.system(cmd)
 
         lemma = str(set(lemmas))
         print('lemmas: ' + lemma)
         cmd="say " + 'lemmas: ' + lemma
-        # os.system(cmd)
+        os.system(cmd)
 
         hyponym = str(set(hyponyms))
         print('hyponyms: ' + hyponym)
         cmd="say " + 'hyponyms: ' + hyponym
-        # os.system(cmd)
+        os.system(cmd)
 
         hypernym = str(set(hypernyms))
         print('hypernyms: ' + hypernym)
         cmd="say " + 'hypernyms: ' + hypernym
-        # os.system(cmd)
+        os.system(cmd)
 
         holonym = str(set(holonyms))
         print('holonyms: ' + holonym)
         cmd="say " + 'holonyms: ' + holonym
-        # os.system(cmd)
+        os.system(cmd)
 
         meronym = str(set(meronyms))
         print('meronyms: ' + meronym)
         cmd="say " + 'meronyms: ' + meronym
-        # os.system(cmd)
+        os.system(cmd)
 
         entailment = str(set(entailments))
         print('entailments: ' + entailment)
         cmd="say " + 'entailments: ' + entailment
-        # os.system(cmd)
+        os.system(cmd)
 
 if __name__ == "__main__":
     #tutuorial
-    transform('./img/Typology.png')
+    # transform('./img/Typology.png')
     #website
-    website()
+    # website()
     #search
     while (1):
         print ('listening for keyword')

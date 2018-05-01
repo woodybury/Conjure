@@ -2,14 +2,9 @@ import cv2
 import numpy as np
 from occamy import Socket
 
-# socket = Socket("ws://dlevs.me:4000/socket")
-# socket.connect()
+import connect
 
-# channel = socket.channel("room:lobby", {})
-# channel.on("connect", print ('Im in'))
-# channel.on("new_msg", lambda msg, x: print("> {}".format(msg["body"])))
-
-# channel.join()
+channel = connect.join()
 
 # capture frames from a camera
 cap = cv2.VideoCapture(0)
@@ -94,7 +89,7 @@ while(1):
         transformSend+=(" "+str(ele))
         count += 1
 
-    # channel.push("input",{"body": transformSend})
+    channel.push("input",{"body": transformSend})
 
 
     # Wait for Esc key to stop
