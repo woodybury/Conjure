@@ -80,8 +80,8 @@ def transform(image_2, image_1, image_3):
     trans_image = np.concatenate((image_1, image_2, image_3), axis=1)
 
     # for dev
-    lg_image = cv2.resize(trans_image, (960,480), interpolation = cv2.INTER_NEAREST)
-    cv2.imshow("Large", lg_image)
+    # lg_image = cv2.resize(trans_image, (960,480), interpolation = cv2.INTER_NEAREST)
+    # cv2.imshow("Large", lg_image)
 
     if connected:
         # flatten array
@@ -166,6 +166,8 @@ def facial_landmark_stuff (rect, gray, h, w):
 
 def faceform():
     cap= cv2.VideoCapture(0)
+    cap.set(3,500)
+    cap.set(4,500)
     time.sleep(1)
 
     empty_screen = transform_image('img/tm.jpg')
@@ -180,7 +182,9 @@ def faceform():
         ret, image = cap.read()
         if ret:
             # load the image, resize it (helps with speed!), and convert it to grayscale
-            image = imutils.resize(image, width=500)
+            # image = imutils.resize(image, width=400)
+
+            # cv2.imshow('test', image)
 
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             h, w = gray.shape[:2]
@@ -197,7 +201,6 @@ def faceform():
                 # loop over the face detections
                 if face_number != 0:
                     if face_number == 1:
-                        print (rects[0])
                         (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[0])
                         screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
                         screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
