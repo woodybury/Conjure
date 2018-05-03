@@ -14,10 +14,11 @@ except ConnectionRefusedError:
     print ('failed to connect')
 
 
-# initialize dlib's face detector (HOG-based) and then create
-# the facial landmark predictor
+# initialize dlib's face detector (HOG-based)
 detector = dlib.get_frontal_face_detector()
+# opencv face cascades
 face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
+# create the facial landmark predictor
 predictor = dlib.shape_predictor('data/shape_predictor_68_face_landmarks.dat')
 
 # pick apart the face
@@ -165,47 +166,75 @@ def facial_landmark_stuff (rect, gray, h, w):
     return trans_image
 
 
-def faceform():
+def faceform(face='cv2', sm_scale=3, sm_width=500):
     cap= cv2.VideoCapture(0)
-    cap.set(3,500)
-    cap.set(4,500)
     time.sleep(1)
 
     empty_screen = transform_image('img/tm.jpg')
-    # empty_screen = np.zeros((24,16), np.uint8)
 
     count = 0
     rects = None
-
-    sm_scale = 2
 
     while (1):
         ret, image = cap.read()
         if ret:
             # load the image, resize it (helps with speed!), and convert it to grayscale
-            image = imutils.resize(image, width=400)
-
-            # cv2.imshow('test', image)
-
+            image = imutils.resize(image, width=sm_width)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+            # get new h and w
             h, w = gray.shape[:2]
+
+            # scale for face detection
             sm_image = imutils.resize(gray, width=int(w/sm_scale))
 
-            # detect faces in the grayscale image
+            # detect faces in the scaled grayscale image every nth frame
             count = count + 1
             if count % 5:
-                rects = face_cascade.detectMultiScale(sm_image, 1.3, 5)
-                # rects = detector(sm_image, 1)
-
-            if rects != ():
+                if face == 'cv2':
+                    rects = face_cascade.detectMultiScale(sm_image, 1.3, 5)
+                elif face == 'dlib':
+                    rects = detector(sm_image, 1)
+            # using cv2 cascades
+            if face == 'cv2' and rects != ():
                 face_number = len(rects)
-
-                # loop over the face detections
                 if face_number != 0:
                     if face_number == 1:
-                        for (rect_x,rect_y,rect_w,rect_h) in rects:
-                            # (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[0])
-                            screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        (rect_x,rect_y,rect_w,rect_h) = rects[0]
+                        screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
+                        transform(screen_1, empty_screen, empty_screen)
+                    elif face_number == 2:
+                        (rect_x,rect_y,rect_w,rect_h) = rects[0]
+                        screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
+
+                        (rect_x,rect_y,rect_w,rect_h) = rects[1]
+                        screen_2_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_2 = facial_landmark_stuff(screen_2_rect, gray, h, w)
+                        transform(screen_2, screen_1, empty_screen)
+                    else:
+                        (rect_x,rect_y,rect_w,rect_h) = rects[0]
+                        screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
+
+                        (rect_x,rect_y,rect_w,rect_h) = rects[1]
+                        screen_2_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_2 = facial_landmark_stuff(screen_2_rect, gray, h, w)
+
+                        (rect_x,rect_y,rect_w,rect_h) = rects[2]
+                        screen_3_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_3 = facial_landmark_stuff(screen_3_rect, gray, h, w)
+                        transform(screen_2, screen_1, screen_3)
+
+            # of using dlib HOG-based face detector
+            if face == 'dlib' and rects:
+                face_number = len(rects)
+
+                if face_number != 0:
+                    if face_number == 1:
+                        (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[0])
+                        screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
                         screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
                         transform(screen_1, empty_screen, empty_screen)
                     elif face_number == 2:
@@ -239,4 +268,4 @@ def faceform():
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    faceform()
+    faceform('dlib', 2, 600)
