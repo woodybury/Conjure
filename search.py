@@ -7,7 +7,7 @@ import connect
 import cv2, time
 import numpy as np
 
-# channel = connect.join()
+channel = connect.join()
 
 searchsound = sa.WaveObject.from_wave_file('sound/search.wav')
 
@@ -18,10 +18,13 @@ if os.uname()[1] == 'raspberrypi':
 else:
     mic = sr.Microphone()
 
-def transform( image ):
+def transform( image, invert=False ):
     img = cv2.imread(image, 0)
 
-    img = (img - 75)
+    if invert:
+        img = (img - 75)
+    else:
+        img = (img + 20)
 
     # resize img for transform
     img = cv2.resize(img, (16,24), interpolation = cv2.INTER_NEAREST)
@@ -41,7 +44,7 @@ def transform( image ):
     print (transformSend)
 
     # uncomment this to send to server
-    # channel.push("input",{"body": transformSend})
+    channel.push("input",{"body": transformSend})
 
 
 def website():
@@ -179,8 +182,16 @@ def recognize_search():
 
 if __name__ == "__main__":
     #tutuorial
-    # transform('./img/Typology.png')
-    #website
+    while True:
+        test = input("Press Enter to continue...")
+        transform('./img/inverted.png', False)
+        test = input("Press Enter to continue...")
+        transform('./img/inverted2.png', False)
+        test = input("Press Enter to continue...")
+        transform('./img/dom.png', True)
+        test = input("Press Enter to continue...")
+        transform('./img/Typology.png', True)
+        test = input("Press Enter to continue...")
     # website()
     #search
     while (1):

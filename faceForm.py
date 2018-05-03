@@ -75,7 +75,7 @@ def crop_aspect (image, landmarks, type='center', rect=None):
         return transform_image('img/tm.jpg')
 
 
-def transform(image_1, image_2, image_3):
+def transform(image_2, image_1, image_3):
 
     trans_image = np.concatenate((image_1, image_2, image_3), axis=1)
 
@@ -171,33 +171,40 @@ def faceform():
     empty_screen = transform_image('img/tm.jpg')
     # empty_screen = np.zeros((24,16), np.uint8)
 
+    count = 0
+    rects = None
+
     while (1):
         ret, image = cap.read()
         if ret:
             # load the image, resize it (helps with speed!), and convert it to grayscale
-            image = imutils.resize(image, width=400)
+            image = imutils.resize(image, width=300)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             h, w = image.shape[:2]
 
             # detect faces in the grayscale image
-            rects = detector(gray, 1)
+            count = count + 1
+            if count % 3:
+                rects = detector(gray, 1)
 
-            face_number = len(rects)
+            if rects:
 
-            # loop over the face detections
-            if face_number != 0:
-                if face_number == 1:
-                    screen_1 = facial_landmark_stuff(rects[0], gray, h, w)
-                    transform(screen_1, empty_screen, empty_screen)
-                elif face_number == 2:
-                    screen_1 = facial_landmark_stuff(rects[0], gray, h, w)
-                    screen_2 = facial_landmark_stuff(rects[1], gray, h, w)
-                    transform(screen_1, screen_2, empty_screen)
-                else:
-                    screen_1 = facial_landmark_stuff(rects[0], gray, h, w)
-                    screen_2 = facial_landmark_stuff(rects[1], gray, h, w)
-                    screen_3 = facial_landmark_stuff(rects[2], gray, h, w)
-                    transform(screen_1, screen_2, screen_3)
+                face_number = len(rects)
+
+                # loop over the face detections
+                if face_number != 0:
+                    if face_number == 1:
+                        screen_1 = facial_landmark_stuff(rects[0], gray, h, w)
+                        transform(screen_1, empty_screen, empty_screen)
+                    elif face_number == 2:
+                        screen_1 = facial_landmark_stuff(rects[0], gray, h, w)
+                        screen_2 = facial_landmark_stuff(rects[1], gray, h, w)
+                        transform(screen_1, screen_2, empty_screen)
+                    else:
+                        screen_1 = facial_landmark_stuff(rects[0], gray, h, w)
+                        screen_2 = facial_landmark_stuff(rects[1], gray, h, w)
+                        screen_3 = facial_landmark_stuff(rects[2], gray, h, w)
+                        transform(screen_1, screen_2, screen_3)
 
 
             k = cv2.waitKey(5) & 0xFF
