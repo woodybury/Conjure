@@ -5,6 +5,7 @@ import imutils
 
 # cascade for face detection
 face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
+for (x,y,w,h) in faces:
 
 def lookforfaces():
     # pi cam

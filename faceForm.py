@@ -17,6 +17,7 @@ except ConnectionRefusedError:
 # initialize dlib's face detector (HOG-based) and then create
 # the facial landmark predictor
 detector = dlib.get_frontal_face_detector()
+face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
 predictor = dlib.shape_predictor('data/shape_predictor_68_face_landmarks.dat')
 
 # pick apart the face
@@ -80,8 +81,8 @@ def transform(image_2, image_1, image_3):
     trans_image = np.concatenate((image_1, image_2, image_3), axis=1)
 
     # for dev
-    # lg_image = cv2.resize(trans_image, (960,480), interpolation = cv2.INTER_NEAREST)
-    # cv2.imshow("Large", lg_image)
+    lg_image = cv2.resize(trans_image, (960,480), interpolation = cv2.INTER_NEAREST)
+    cv2.imshow("Large", lg_image)
 
     if connected:
         # flatten array
@@ -176,13 +177,13 @@ def faceform():
     count = 0
     rects = None
 
-    sm_scale = 3
+    sm_scale = 2
 
     while (1):
         ret, image = cap.read()
         if ret:
             # load the image, resize it (helps with speed!), and convert it to grayscale
-            image = imutils.resize(image, width=300)
+            image = imutils.resize(image, width=400)
 
             # cv2.imshow('test', image)
 
@@ -193,16 +194,18 @@ def faceform():
             # detect faces in the grayscale image
             count = count + 1
             if count % 5:
-                rects = detector(sm_image, 1)
+                rects = face_cascade.detectMultiScale(sm_image, 1.3, 5)
+                # rects = detector(sm_image, 1)
 
-            if rects:
+            if rects != ():
                 face_number = len(rects)
 
                 # loop over the face detections
                 if face_number != 0:
                     if face_number == 1:
-                        (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[0])
-                        screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        for (rect_x,rect_y,rect_w,rect_h) in rects:
+                            # (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[0])
+                            screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
                         screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
                         transform(screen_1, empty_screen, empty_screen)
                     elif face_number == 2:
