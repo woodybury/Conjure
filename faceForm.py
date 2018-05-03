@@ -174,21 +174,23 @@ def faceform():
     count = 0
     rects = None
 
+    sm_scale = 1
+
     while (1):
         ret, image = cap.read()
         if ret:
             # load the image, resize it (helps with speed!), and convert it to grayscale
-            image = imutils.resize(image, width=300)
+            image = imutils.resize(image, width=450)
+
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-            h, w = image.shape[:2]
+            h, w = gray.shape[:2]
 
             # detect faces in the grayscale image
             count = count + 1
-            if count % 3:
+            if count % 5:
                 rects = detector(gray, 1)
 
             if rects:
-
                 face_number = len(rects)
 
                 # loop over the face detections
