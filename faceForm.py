@@ -182,7 +182,7 @@ def faceform():
         ret, image = cap.read()
         if ret:
             # load the image, resize it (helps with speed!), and convert it to grayscale
-            # image = imutils.resize(image, width=400)
+            image = imutils.resize(image, width=300)
 
             # cv2.imshow('test', image)
 
