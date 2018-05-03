@@ -174,21 +174,22 @@ def faceform():
     count = 0
     rects = None
 
-    sm_scale = 1
+    sm_scale = 3
 
     while (1):
         ret, image = cap.read()
         if ret:
             # load the image, resize it (helps with speed!), and convert it to grayscale
-            image = imutils.resize(image, width=450)
+            image = imutils.resize(image, width=500)
 
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
             h, w = gray.shape[:2]
+            sm_image = imutils.resize(gray, width=int(w/sm_scale))
 
             # detect faces in the grayscale image
             count = count + 1
             if count % 5:
-                rects = detector(gray, 1)
+                rects = detector(sm_image, 1)
 
             if rects:
                 face_number = len(rects)
@@ -196,17 +197,33 @@ def faceform():
                 # loop over the face detections
                 if face_number != 0:
                     if face_number == 1:
-                        screen_1 = facial_landmark_stuff(rects[0], gray, h, w)
+                        print (rects[0])
+                        (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[0])
+                        screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
                         transform(screen_1, empty_screen, empty_screen)
                     elif face_number == 2:
-                        screen_1 = facial_landmark_stuff(rects[0], gray, h, w)
-                        screen_2 = facial_landmark_stuff(rects[1], gray, h, w)
-                        transform(screen_1, screen_2, empty_screen)
+                        (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[0])
+                        screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
+
+                        (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[1])
+                        screen_2_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_2 = facial_landmark_stuff(screen_2_rect, gray, h, w)
+                        transform(screen_2, screen_1, empty_screen)
                     else:
-                        screen_1 = facial_landmark_stuff(rects[0], gray, h, w)
-                        screen_2 = facial_landmark_stuff(rects[1], gray, h, w)
-                        screen_3 = facial_landmark_stuff(rects[2], gray, h, w)
-                        transform(screen_1, screen_2, screen_3)
+                        (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[0])
+                        screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
+
+                        (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[1])
+                        screen_2_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_2 = facial_landmark_stuff(screen_2_rect, gray, h, w)
+
+                        (rect_x, rect_y, rect_w, rect_h) = face_utils.rect_to_bb(rects[2])
+                        screen_3_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
+                        screen_3 = facial_landmark_stuff(screen_3_rect, gray, h, w)
+                        transform(screen_2, screen_1, screen_3)
 
 
             k = cv2.waitKey(5) & 0xFF
