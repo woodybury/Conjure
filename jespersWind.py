@@ -20,12 +20,6 @@ while(1):
         # add img together x3 for total transform
         img = np.concatenate((img, img, img), axis=1)
 
-        # uncomment this to see image
-        '''
-        cv2.imshow('image', img)
-        cv2.waitKey()
-        '''
-
         # flatten array
         img = img.flatten()
 
@@ -35,9 +29,6 @@ while(1):
         for ele in img:
             count += 1
             transformSend+=(" "+str(ele))
-
-        # if you want to look at the numbers :)
-        print (count)
 
         # uncomment this to send to server
         channel.push("input",{"body": transformSend})

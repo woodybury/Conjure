@@ -9,6 +9,7 @@ import connect
 connected = True
 try:
     channel = connect.join()
+    print ('connect tried')
 except ConnectionRefusedError:
     connected = False
     print ('failed to connect')
@@ -73,7 +74,8 @@ def crop_aspect (image, landmarks, type='center', rect=None):
             aspect_y = y
 
         return image[ aspect_y:aspect_height, aspect_x: aspect_width ]
-    except ValueError:
+    except cv2.error:
+        print ('crop error')
         return transform_image('img/tm.jpg')
 
 
@@ -96,9 +98,8 @@ def transform(image_2, image_1, image_3):
 
         # if you want to look at the numbers :)
         # print (transform_send)
-        # uncomment this to send to server
-        channel.push("input",{"body": transform_send})
-
+        if connected:
+            channel.push("input",{"body": transform_send})
 
 def facial_landmark_stuff (rect, gray, h, w):
     blank_image = np.zeros((h,w,1), np.uint8)
@@ -146,13 +147,17 @@ def facial_landmark_stuff (rect, gray, h, w):
         paint_line (blank_image, landmarks[mouth_out], 175, 1)
         # paint_line (blank_image, landmarks[mouth_in], 155, r2)
 
-    # use my helper functions to track and crop face using either the 'center' method or the 'bounded' method.
-    # 'centered' creates the transform size rectangle around the center of the nose. The rectangle uses a scalar that is the distance between the eyes
-    # 'bounded' uses the dlib rectangle from the detecting faces and maps it to transform while maintaining face aspect ratio
-    crop_image = crop_aspect(blank_image, landmarks, 'center', rect)
+    try:
+        # use my helper functions to track and crop face using either the 'center' method or the 'bounded' method.
+        # 'centered' creates the transform size rectangle around the center of the nose. The rectangle uses a scalar that is the distance between the eyes
+        # 'bounded' uses the dlib rectangle from the detecting faces and maps it to transform while maintaining face aspect ratio
+        crop_image = crop_aspect(blank_image, landmarks, 'center', rect)
 
-    # resize for transform using INTER_AREA => interpolation using pixel area relation
-    trans_image = cv2.resize(crop_image, (16,24), interpolation = cv2.INTER_AREA)
+        # resize for transform using INTER_AREA => interpolation using pixel area relation
+        trans_image = cv2.resize(crop_image, (16,24), interpolation = cv2.INTER_AREA)
+    except cv2.error:
+        print ('crop error')
+        trans_image = transform_image('img/tm.jpg')
 
     # various useful blurs
     '''
@@ -163,7 +168,7 @@ def facial_landmark_stuff (rect, gray, h, w):
     blur = cv2.filter2D(trans_image,-1,kernel)
     '''
 
-    return trans_image
+    return [trans_image, landmarks]
 
 
 def faceform(face='cv2', sm_scale=3, sm_width=500):
@@ -181,6 +186,8 @@ def faceform(face='cv2', sm_scale=3, sm_width=500):
             # load the image, resize it (helps with speed!), and convert it to grayscale
             image = imutils.resize(image, width=sm_width)
             gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+            monitor_landmarks = []
 
             # get new h and w
             h, w = gray.shape[:2]
@@ -202,29 +209,41 @@ def faceform(face='cv2', sm_scale=3, sm_width=500):
                     if face_number == 1:
                         (rect_x,rect_y,rect_w,rect_h) = rects[0]
                         screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
-                        screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
+                        screen_1_stuff = facial_landmark_stuff(screen_1_rect, gray, h, w)
+                        screen_1 = screen_1_stuff[0]
+                        monitor_landmarks.append(screen_1_stuff[1])
                         transform(screen_1, empty_screen, empty_screen)
                     elif face_number == 2:
                         (rect_x,rect_y,rect_w,rect_h) = rects[0]
                         screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
-                        screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
+                        screen_1_stuff = facial_landmark_stuff(screen_1_rect, gray, h, w)
+                        screen_1 = screen_1_stuff[0]
+                        monitor_landmarks.append(screen_1_stuff[1])
 
                         (rect_x,rect_y,rect_w,rect_h) = rects[1]
                         screen_2_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
-                        screen_2 = facial_landmark_stuff(screen_2_rect, gray, h, w)
+                        screen_2_stuff = facial_landmark_stuff(screen_2_rect, gray, h, w)
+                        screen_2 = screen_2_stuff[0]
+                        monitor_landmarks.append(screen_2_stuff[1])
                         transform(screen_2, screen_1, empty_screen)
                     else:
                         (rect_x,rect_y,rect_w,rect_h) = rects[0]
                         screen_1_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
-                        screen_1 = facial_landmark_stuff(screen_1_rect, gray, h, w)
+                        screen_1_stuff = facial_landmark_stuff(screen_1_rect, gray, h, w)
+                        screen_1 = screen_1_stuff[0]
+                        monitor_landmarks.append(screen_1_stuff[1])
 
                         (rect_x,rect_y,rect_w,rect_h) = rects[1]
                         screen_2_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
-                        screen_2 = facial_landmark_stuff(screen_2_rect, gray, h, w)
+                        screen_2_stuff = facial_landmark_stuff(screen_2_rect, gray, h, w)
+                        screen_2 = screen_2_stuff[0]
+                        monitor_landmarks.append(screen_2_stuff[1])
 
                         (rect_x,rect_y,rect_w,rect_h) = rects[2]
                         screen_3_rect = dlib.rectangle(rect_x*sm_scale, rect_y*sm_scale, (rect_x + rect_w)*sm_scale, (rect_y + rect_h)*sm_scale)
-                        screen_3 = facial_landmark_stuff(screen_3_rect, gray, h, w)
+                        screen_3_stuff = facial_landmark_stuff(screen_3_rect, gray, h, w)
+                        screen_3 = screen_3_stuff[0]
+                        monitor_landmarks.append(screen_3_stuff[1])
                         transform(screen_2, screen_1, screen_3)
 
             # of using dlib HOG-based face detector
@@ -260,6 +279,23 @@ def faceform(face='cv2', sm_scale=3, sm_width=500):
                         screen_3 = facial_landmark_stuff(screen_3_rect, gray, h, w)
                         transform(screen_2, screen_1, screen_3)
 
+            for i, landmarks in enumerate(monitor_landmarks):
+                if i == 0:
+                    color = (255,0,0)
+                elif i == 1:
+                    color = (0,255,0)
+                else:
+                    color = (0,0,255)
+                paint_line (image, landmarks[nose_down], color, 2)
+                paint_line (image, landmarks[nose_accross], color, 2)
+                paint_circle(image, landmarks[30], color, 1, 1)
+                # eyes
+                paint_line (image, landmarks[eye_left], color, 2)
+                paint_line (image, landmarks[eye_right], color, 2)
+                # mouth
+                paint_line (image, landmarks[mouth_out], color, 2)
+
+            cv2.imshow('original', image)
 
             k = cv2.waitKey(5) & 0xFF
             if k == 27:
@@ -268,4 +304,4 @@ def faceform(face='cv2', sm_scale=3, sm_width=500):
     cv2.destroyAllWindows()
 
 if __name__ == "__main__":
-    faceform('dlib', 2, 600)
+    faceform('cv2', 1, 800)
