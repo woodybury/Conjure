@@ -84,10 +84,11 @@ def transform(image_2, image_1, image_3):
     trans_image = np.concatenate((image_1, image_2, image_3), axis=1)
 
     # for dev
-    lg_image = cv2.resize(trans_image, (960,480), interpolation = cv2.INTER_NEAREST)
-    cv2.imshow("Large", lg_image)
+    # lg_image = cv2.resize(trans_image, (960,480), interpolation = cv2.INTER_NEAREST)
+    # cv2.imshow("Large", lg_image)
 
     if connected:
+        # print ('sending')
         # flatten array
         flat_image = trans_image.flatten()
 
@@ -135,7 +136,6 @@ def facial_landmark_stuff (rect, gray, h, w):
         # paint_line (blank_image, landmarks[mouth_in], 155, r2)
 
     else:
-        print ('small')
         #nose
         paint_line (blank_image, landmarks[nose_down], 175, 1)
         paint_line (blank_image, landmarks[nose_accross], 175, 1, nose_offset )
@@ -172,6 +172,7 @@ def facial_landmark_stuff (rect, gray, h, w):
 
 
 def faceform(face='cv2', sm_scale=3, sm_width=500):
+    global connected
     cap= cv2.VideoCapture(0)
     time.sleep(1)
 
@@ -295,11 +296,18 @@ def faceform(face='cv2', sm_scale=3, sm_width=500):
                 # mouth
                 paint_line (image, landmarks[mouth_out], color, 2)
 
-            cv2.imshow('original', image)
+            lg_image = cv2.resize(image, (1110,int((1110/w)*h)))
 
-            k = cv2.waitKey(5) & 0xFF
-            if k == 27:
-                break
+            cv2.imshow('original', lg_image)
+
+            k = cv2.waitKey(5) & 0xF
+            if k == 1:
+                print ('stop shape display')
+                connected = False
+            if k == 0:
+                print ('start shape display')
+                connected = True
+
     cap.release()
     cv2.destroyAllWindows()
 
