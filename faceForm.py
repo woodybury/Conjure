@@ -4,6 +4,7 @@ import imutils
 import dlib,time
 import cv2
 
+# helper file in repo
 import connect
 
 connected = True
@@ -17,9 +18,9 @@ except ConnectionRefusedError:
 
 # initialize dlib HOG-based face detector
 detector = dlib.get_frontal_face_detector()
-# initialize opencv face cascades
+# initialize opencv face cascades - xml in repo data dir
 face_cascade = cv2.CascadeClassifier('data/haarcascade_frontalface_default.xml')
-# create facial landmark predictor
+# create facial landmark predictor - dat in repo data dir
 predictor = dlib.shape_predictor('data/shape_predictor_68_face_landmarks.dat')
 
 # pick apart the face
@@ -105,6 +106,8 @@ def transform(image_2, image_1, image_3):
 
 # run the landmark model and paint based on b/w eye scalar
 def facial_landmark_stuff (rect, gray, h, w):
+
+    # create same size blank img for blank painting canvas
     blank_image = np.zeros((h,w,1), np.uint8)
 
     # determine the facial landmarks for the face region, then
@@ -255,7 +258,7 @@ def faceform(face='cv2', sm_scale=3, sm_width=500):
 
                         transform(screen_2, screen_1, screen_3)
 
-            # of using dlib HOG-based face detector (slower but more accurate?)
+            # for using dlib HOG-based face detector (slower but more accurate?)
             if face == 'dlib' and rects:
                 face_number = len(rects)
 
