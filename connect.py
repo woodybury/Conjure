@@ -9,6 +9,6 @@ def join():
     #channel.on("touch", print("no("))
     #channel.on("touch", lambda msg, x: print("> {}".format(msg["body"])))
 
-    channel.join()
+    # channel.join()
 
     return channel
