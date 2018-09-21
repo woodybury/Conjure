@@ -1,5 +1,7 @@
-# edgeForm
+# Conjure
 
-![color screenshot](https://raw.githubusercontent.com/WoodburyShortridge/edgeForm/master/img/color.png "edge screenshot")
+Dynamic affordance for visually impaired
 
-![edge screenshot](https://raw.githubusercontent.com/WoodburyShortridge/edgeForm/master/img/edge.png "edge screenshot")
+see `faceForm.py` for face app, `listening.py` for VUI and `connect.py` for websockets to TRANSFORM
+
+![members week](https://raw.githubusercontent.com/WoodburyShortridge/Conjure/master/img/conjure.jpg "demo of webcam tracking facial features and displaying on transform")
